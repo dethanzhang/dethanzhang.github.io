@@ -1,69 +1,186 @@
-<img align="right" width="150" alt="logo" src="https://user-images.githubusercontent.com/5889006/190859553-5b229b4f-c476-4cbd-928f-890f5265ca4c.png">
+# B#aug 博客管理说明
 
-# Hugo Theme Stack Starter Template
+这是一个基于 Hugo + Stack 主题的静态博客项目。文章、页面和配置都在这个仓库里，推送到 GitHub 后会通过 GitHub Actions 自动发布到 GitHub Pages。
 
-This is a quick start template for [Hugo theme Stack](https://github.com/CaiJimmy/hugo-theme-stack). It uses [Hugo modules](https://gohugo.io/hugo-modules/) feature to load the theme.
+## 目录怎么用
 
-It comes with a basic theme structure and configuration. GitHub action has been set up to deploy the theme to a public GitHub page automatically. Also, there's a cron job to update the theme automatically everyday.
+- `content/post/`：博客文章。每篇文章建议一个文件夹，正文写在 `index.md`，配图放同一个文件夹。
+- `content/page/`：独立页面，比如归档、搜索、友链。
+- `content/categories/`：分类页配置。
+- `config/_default/`：站点配置、菜单、主题参数。
+- `static/`：全站静态文件，比如 `favicon.png`。
+- `assets/scss/custom.scss`：自定义样式。
+- `.github/workflows/deploy.yml`：自动构建并发布到 `gh-pages` 分支。
 
-## Get started
+## 本地预览
 
-1. Click *Use this template*, and create your repository as `<username>.github.io` on GitHub.
-![Step 1](https://user-images.githubusercontent.com/5889006/156916624-20b2a784-f3a9-4718-aa5f-ce2a436b241f.png)
+需要先安装 Hugo Extended 和 Go。
 
-2. Once the repository is created, create a GitHub codespace associated with it.
-![Create codespace](https://user-images.githubusercontent.com/5889006/156916672-43b7b6e9-4ffb-4704-b4ba-d5ca40ffcae7.png)
-
-3. And voila! You're ready to go. The codespace has been configured with the latest version of Hugo extended, just run `hugo server` in the terminal and see your new site in action.
-
-4. Check `config` folder for the configuration files. You can edit them to suit your needs. Make sure to update the `baseurl` property in `config/_default/config.toml` to your site's URL.
-
-5. Open Settings -> Pages. Change the build branch from `master` to `gh-pages`.
-![Build](https://github.com/namanh11611/hugo-theme-stack-starter/assets/16586200/12c763cd-bead-4923-b610-8788f388fcb5)
-
-6. Once you're done editing the site, just commit it and push it. GitHub action will deploy the site automatically to GitHub page asociated with the repository.
-![GitHub action](https://user-images.githubusercontent.com/5889006/156916881-90b8bb9b-1925-4e60-9d7a-8026cda729bf.png)
-
----
-
-In case you don't want to use GitHub codespace, you can also run this template in your local machine. **You need to install Git, Go and Hugo extended locally.**
-
-## Update theme manually
-
-Run:
+macOS 推荐：
 
 ```bash
-hugo mod get -u github.com/CaiJimmy/hugo-theme-stack/v3
-hugo mod tidy
+brew install hugo go
 ```
 
-> This starter template has been configured with `v3` version of theme. Due to the limitation of Go module, once the `v4` or up version of theme is released, you need to update the theme manually. (Modifying `config/module.toml` file)
+启动本地预览：
 
-## Deploy to another static page hostings
-
-If you want to build this site using another static page hosting, you need to make sure they have Go installed in the machine. 
-
-<details>
-  <summary>Vercel</summary>
-  
-You need to overwrite build command to install manually Go:
-
-```
-amazon-linux-extras install golang1.11 && hugo --gc --minify
+```bash
+hugo server -D
 ```
 
-![](https://user-images.githubusercontent.com/5889006/156917172-01e4d418-3469-4ffb-97e4-a905d28b8424.png)
+然后打开终端提示的地址，通常是：
 
-If you are using Node.js 20, you need to overwrite the install command to install manually Go:
-
-```
-dnf install -y golang
+```text
+http://localhost:1313/
 ```
 
-![image](https://github.com/zhi-yi-huang/hugo-theme-stack-starter/assets/83860323/777c1109-dfc8-4893-9db7-1305ec027cf5)
+当前这台机器还没有安装 `hugo`，所以本地预览前需要先安装。
 
+## 新建文章
 
-Make sure also to specify Hugo version in the environment variable `HUGO_VERSION` (Use the latest version of Hugo extended):
+推荐使用一篇文章一个目录的方式：
 
-![Environment variable](https://user-images.githubusercontent.com/5889006/156917212-afb7c70d-ab85-480f-8288-b15781a462c0.png)
-</details>
+```bash
+hugo new content/post/my-post/index.md
+```
+
+然后编辑：
+
+```text
+content/post/my-post/index.md
+```
+
+如果文章有封面图，把图片放进同一个目录，例如：
+
+```text
+content/post/my-post/cover.jpg
+```
+
+文章开头的 Front Matter 示例：
+
+```yaml
+---
+title: "文章标题"
+description: "一句话摘要"
+slug: "my-post"
+date: 2026-05-16T00:00:00+08:00
+image: "cover.jpg"
+categories:
+  - 随笔
+tags:
+  - 博客
+draft: false
+---
+```
+
+常用字段：
+
+- `title`：文章标题。
+- `description`：摘要，会影响列表页和搜索展示。
+- `slug`：文章 URL。当前文章链接格式是 `/p/:slug/`。
+- `date`：发布时间。
+- `image`：封面图，留空或删除则不显示封面。
+- `categories`：分类。
+- `tags`：标签。
+- `draft`：草稿。`true` 不会正式发布，`false` 会发布。
+
+## 写文章
+
+正文使用 Markdown：
+
+```markdown
+## 二级标题
+
+这是一段文字。
+
+![图片说明](cover.jpg)
+
+[链接文字](https://example.com)
+```
+
+同目录图片可以直接用文件名引用，比如 `cover.jpg`。
+
+## 发布流程
+
+确认文章不是草稿后提交并推送：
+
+```bash
+git status
+git add content config assets static README.md archetypes
+git commit -m "Add new post"
+git push
+```
+
+仓库推送到 `master` 后，`.github/workflows/deploy.yml` 会自动构建 Hugo 站点，并把生成结果发布到 `gh-pages` 分支。
+
+站点地址目前配置为：
+
+```text
+https://blog.cv999.fun/
+```
+
+如果这个域名变了，修改：
+
+```text
+config/_default/config.toml
+```
+
+里的：
+
+```toml
+baseurl = "https://blog.cv999.fun/"
+```
+
+## 常见配置
+
+站点标题：
+
+```text
+config/_default/config.toml
+```
+
+```toml
+title = "B#aug"
+```
+
+侧边栏签名、头像、评论、颜色模式：
+
+```text
+config/_default/params.toml
+```
+
+社交链接和菜单：
+
+```text
+config/_default/menu.toml
+```
+
+自定义 CSS：
+
+```text
+assets/scss/custom.scss
+```
+
+## 建议先清理的模板内容
+
+现在 `content/post/` 里还有 Stack 主题自带的示例文章：
+
+- `hello-world`
+- `image-gallery`
+- `markdown-syntax`
+- `math-typesetting`
+- `shortcodes`
+
+正式使用前可以删除这些示例，或者把它们改成自己的文章。
+
+## 我可以帮你做什么
+
+你可以直接把需求告诉我，例如：
+
+- “帮我新建一篇文章，标题是……”
+- “把这段文字整理成博客文章”
+- “帮我换头像 / favicon”
+- “帮我改站点标题、简介、菜单”
+- “帮我删除示例文章”
+- “帮我检查为什么 GitHub Pages 没发布”
+- “帮我加评论系统 / 统计 / 友链页面”
